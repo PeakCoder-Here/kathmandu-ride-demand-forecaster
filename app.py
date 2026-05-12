@@ -3,6 +3,10 @@ Kathmandu Ride Demand Forecaster
 Author: Sudeep | Biratnagar, Nepal | 2025
 A premium dark dashboard Streamlit app for ride demand prediction.
 """
+from pathlib import Path
+
+# Base directory — same folder as this app.py file
+BASE_DIR = Path(__file__).parent
 
 import streamlit as st
 import pandas as pd
@@ -181,7 +185,6 @@ html, body, [class*="css"] {
 # ──────────────────────────────────────────────
 # CONSTANTS
 # ──────────────────────────────────────────────
-BASE_PATH = r"D:\projects\Ride-demand-forecasting"
 
 ZONES = [
     "Thamel","Baneshwor","Koteshwor","Lalitpur","Bhaktapur",
@@ -226,19 +229,16 @@ def demand_level(rides: float):
 @st.cache_resource(show_spinner=False)
 def load_model():
     """Load pkl model artefacts once and cache them."""
-    import os
-    def p(name): return os.path.join(BASE_PATH, name)
-    with open(p("demand_model.pkl"), "rb") as f: model = pickle.load(f)
-    with open(p("le_zone.pkl"),      "rb") as f: le_zone = pickle.load(f)
-    with open(p("le_weather.pkl"),   "rb") as f: le_weather = pickle.load(f)
-    with open(p("features.pkl"),     "rb") as f: features = pickle.load(f)
+    with open(BASE_DIR / "demand_model.pkl", "rb") as f: model      = pickle.load(f)
+    with open(BASE_DIR / "le_zone.pkl",      "rb") as f: le_zone    = pickle.load(f)
+    with open(BASE_DIR / "le_weather.pkl",   "rb") as f: le_weather = pickle.load(f)
+    with open(BASE_DIR / "features.pkl",     "rb") as f: features   = pickle.load(f)
     return model, le_zone, le_weather, features
 
 @st.cache_data(show_spinner=False)
 def load_data():
     """Load and lightly preprocess the CSV."""
-    import os
-    df = pd.read_csv(os.path.join(BASE_PATH, "kathmandu_rides.csv"))
+    df = pd.read_csv(BASE_DIR / "kathmandu_rides.csv")
     df.columns = [c.strip().lower() for c in df.columns]
     return df
 
